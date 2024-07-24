@@ -1,6 +1,22 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordResetView
+from django.urls import reverse_lazy
 
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'user/password_reset_form.html'
+    success_url = reverse_lazy('password_reset_done')
+    subject_template_name = 'user/password_reset_subject.txt'
+    email_template_name = 'user/password_reset_email.html'
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
+    location = models.CharField(max_length=30, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username
 
 class Mileage(models.Model):
     name = models.CharField(max_length=6)
@@ -73,35 +89,27 @@ class TransmissionType(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-
 class Car(models.Model):
-
-    STATUS_CHOICES = [
-        (True, 'Active'),
-        (False, 'Inactive'),
-    ]
-
-
-
-    brand = models.OneToOneField(Brand, on_delete=models.CASCADE,  verbose_name='Marka')
-    car_models = models.ForeignKey(CarModel, on_delete=models.CASCADE , verbose_name='Model',)
-    new_bord = models.ForeignKey(BodyTypeChoices, on_delete=models.CASCADE , verbose_name='Ban novu')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, verbose_name='Marka')
+    car_models = models.ForeignKey(CarModel, on_delete=models.CASCADE, verbose_name='Model')
+    new_bord = models.ForeignKey(BodyTypeChoices, on_delete=models.CASCADE, verbose_name='Ban novu')
     mileage = models.PositiveIntegerField(verbose_name='Yuruyus')
     mileage_unit = models.ForeignKey(Mileage, on_delete=models.CASCADE, default='km')
     color = models.ForeignKey(ColorChoices, on_delete=models.CASCADE, verbose_name='Reng')
     price = models.PositiveIntegerField(verbose_name='Qiymət')
-    price_currency = models.ForeignKey(MoneyCurrencies, on_delete=models.CASCADE ,default='AZN', verbose_name='Valyuta')
-    owner_number = models.ForeignKey(OwnerCount, on_delete=models.CASCADE , verbose_name='Necenci sahibisiniz?')
-    fuel_type = models.ForeignKey(FuelTypeChoices, on_delete=models.CASCADE , verbose_name='Yanacaq novu')
-    transmission = models.ForeignKey(TransmissionChoices, on_delete=models.CASCADE,  verbose_name='Surretler qutusu')
+    price_currency = models.ForeignKey(MoneyCurrencies, on_delete=models.CASCADE, default='AZN', verbose_name='Valyuta')
+    owner_number = models.ForeignKey(OwnerCount, on_delete=models.CASCADE, verbose_name='Necenci sahibisiniz?')
+    fuel_type = models.ForeignKey(FuelTypeChoices, on_delete=models.CASCADE, verbose_name='Yanacaq novu')
+    transmission = models.ForeignKey(TransmissionChoices, on_delete=models.CASCADE, verbose_name='Surretler qutusu')
     year = models.ForeignKey(YearChoices, on_delete=models.CASCADE, verbose_name='il')
     engine_capasity = models.PositiveIntegerField(verbose_name='Mühərrikin həcmi, sm³')
     engine_power = models.PositiveIntegerField(verbose_name='Mühərrikin gücü, a.g.')
-    collected_for_which_market = models.ForeignKey(MarketChoices, on_delete=models.CASCADE, verbose_name='Hansi bazar  ucun yigilib', default='Bakı')
+    collected_for_which_market = models.ForeignKey(MarketChoices, on_delete=models.CASCADE, verbose_name='Hansi bazar ucun yigilib', default='Bakı')
     damage_have = models.BooleanField(default=False, verbose_name='Vurugu var')
     painted = models.BooleanField(default=False, verbose_name='Renglenib')
     for_accident_or_spare_parts = models.BooleanField(default=False, verbose_name='Qezali ve ya ehtiyyat hisseler ucun')
-    seat_count = models.ForeignKey(SeatCountChoices, on_delete=models.CASCADE , verbose_name='Yerlerin sayi')
+    seat_count = models.ForeignKey(SeatCountChoices, on_delete=models.CASCADE, verbose_name='Yerlerin sayi')
     credit_available = models.BooleanField(default=False, verbose_name='Kreditle')
     barter_available = models.BooleanField(default=False, verbose_name='Barter mumkundur')
     vin_number = models.CharField(max_length=17, verbose_name='VIN_kod')
@@ -127,7 +135,17 @@ class Car(models.Model):
     email = models.EmailField(verbose_name='E-mail', blank=True)
     phone_number = models.CharField(max_length=20, verbose_name='Telefon nömrəsi')
     transmission_type = models.ForeignKey(TransmissionType, on_delete=models.CASCADE, null=True, verbose_name='Ötürücü')
-    
-    
+
     def __str__(self):
         return f"{self.brand} {self.car_models} - {self.price}"
+
+class ImageCar(models.Model):
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, verbose_name='Avtomobil')
+    image = models.ImageField(upload_to='user/img_cars', verbose_name='Şəkil')  # Eksik alan eklendi
+
+    def __str__(self):
+        return self.image.name
+
+    class Meta:
+        verbose_name = 'Avtomobil Şəkili'
+        verbose_name_plural = 'Avtomobil Şəkilləri'
