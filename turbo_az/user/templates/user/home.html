@@ -1,11 +1,10 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Car Form</title>
+    <title>Avtomobil Siyahısı</title>
     <link rel="stylesheet" href="{% static 'user/home.css' %}">
     <link rel="stylesheet" href="{% static 'user/create_car.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
@@ -25,36 +24,16 @@
             <div class="container">
                 <div class="row">
                     <ul class="d-flex">
-                        <li>
-                            <a href="https://tap.az/">Tap.az</a>
-                        </li>
-                        <li>
-                            <a href="https://bina.az/">Bina.az</a>
-                        </li>
-                        <li>
-                            <a href="https://boss.az/">Boss.az</a>
-                        </li>
+                        <li><a href="https://tap.az/">Tap.az</a></li>
+                        <li><a href="https://bina.az/">Bina.az</a></li>
+                        <li><a href="https://boss.az/">Boss.az</a></li>
                     </ul>
                     <ul class="d-flex">
                         <span>Dəstək: (012) 505-77-55</span>
-                        <li>
-                            <a href="">Yardım</a>
-                        </li>
-                        <li>
-                            <a href="">RU</a>
-                        </li>
-                        <li>
-                            <a href="{% url 'like_page' %}">
-                                <i class="fa-solid fa-heart"></i>
-                                Seçilmişlər
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{% url 'login_register' %}">
-                                <i class="fa-solid fa-circle-user"></i>
-                                Giriş
-                            </a>
-                        </li>
+                        <li><a href="">Yardım</a></li>
+                        <li><a href="">RU</a></li>
+                        <li><a href="{% url 'like_page' %}"><i class="fa-solid fa-heart"></i> Seçilmişlər</a></li>
+                        <li><a href="{% url 'login_register' %}"><i class="fa-solid fa-circle-user"></i> Giriş</a></li>
                     </ul>
                 </div>
             </div>
@@ -74,204 +53,109 @@
                     </div>
                     <div class="nav-2">
                         <div class="btn">
-                            <a href="{% url 'create_car' %}">
-                                <span><i class="fa-solid fa-circle-plus"></i></span>Yeni elan
-                            </a>
+                            <a href="{% url 'create_car' %}"><span><i class="fa-solid fa-circle-plus"></i></span>Yeni elan</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </header>
+    
     <div class="container">
-        <form class="filter-form">
+        <!-- Filtr Formu -->
+        <form method="get" action="{% url 'home' %}" class="filter-form">
             <div class="filter-group">
-                <select id="brands_car" name="BRANDS_CAR" required>
-                    <option value="0" disabled selected>Marka</option>
-                    {% for brand in brands_car %}
-                        <option value="{{ brand.id }}">{{ brand.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select id="models_car" name="MODELS_CAR" required>
-                        <option value="0" disabled selected>Model</option>
-                        {% for car_model in models_car %}
-                            <option value="{{ car_model.id }}">{{ car_model.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <input type="number" placeholder="Qiymət, min.">
-                    <input type="number" placeholder="maks.">
-                    <select id="mony_currenc" name="MONY_CURRENC" required>
-                        {% for mony_currencs in mony_currenc %}
-                            <option value="{{ mony_currencs.id }}">{{ mony_currencs.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select>
-                        <option>Kredit</option>
-                        <option>Barter</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <select type="text" id="color" name="COLOR" required>
-                        <option value="0" disabled selected>Rəng</option>
-                        {% for colors in color %}
-                            <option value="{{ colors.id }}">{{ colors.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select type="text" id="fuel_type" name="FUEL_TYPE" required>
-                        <option value="0" disabled selected>Yanacaq növü</option>
-                        {% for fuel in fuel_type %}
-                            <option value="{{ fuel.id }}">{{ fuel.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select type="text" id="transmission_type" name="TRANSMISSION_TYPE" required>
-                        <option value="0" disabled selected>Ötürücü</option>
-                        {% for transmitter in transmission_type %}
-                            <option value="{{ transmitter.id }}">{{ transmitter.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select id="transmission" name="TRANSMISSION" required>
-                        <option value="0" disabled selected>Sürətlər Qutusu</option>
-                        {% for transmissions in transmission %}
-                            <option value="{{ transmissions.id }}">{{ transmissions.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <input type="number" placeholder="Həcm (sm³), min.">
-                    <input type="number" placeholder="maks.">
-                    <input type="number" placeholder="Güc (a. g.), min.">
-                    <input type="number" placeholder="maks.">
-                    <input type="number" placeholder="Yürüş (km), min.">
-                    <input type="number" placeholder="maks.">
-                </div>
-                <div class="filter-group">
-                    <select type="text" id="body_type" name="BODY_TYPE">
-                        <option value="0" disabled selected>Ban növü</option>
-                        {% for body_car in body_type %}
-                            <option value="{{ body_car.id }}">{{ body_car.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <input type="number" placeholder="İl, min.">
-                    <input type="number" placeholder="maks.">
-                </div>
-                <div class="filter-group">
-                    <select type="text" id="city" name="CITY">
-                        <option value="0" disabled selected>Şəhər</option>
-                        {% for city_car in city %}
-                            <option value="{{ city_car.id }}">{{ city_car.name }}</option>
-                        {% endfor %}   
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <select type="text" id="owner_count" name="OWNER_COUNT">
-                        <option disabled selected>Sahiblərinin sayı</option>
-                        {% for owner_car in owner_count %}
-                        <option value="{{ owner_car.id }}">{{ owner_car.name }}</option>
-                        {% endfor %}   
-                    </select>
-                    <select type="text" id="seat_count" name="SEAT_COUNT">
-                        <option value="0" disabled selected>Yerlərin sayı</option>
-                        {% for seat_car in seat_count %}
-                            <option value="{{ seat_car.id }}">{{ seat_car.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <select type="text" id="market" name="MARKET">
-                        <option value="0" disabled selected>Hansı bazar üçün yığılb</option>
-                        {% for market_car in market %}
-                            <option value="{{ market_car.id }}">{{ market_car.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>
-                        <input type="checkbox"> Vuruğu yoxdur
-                    </label>
-                    <label>
-                        <input type="checkbox"> Rənglənməyib
-                    </label>
-                    <label>
-                        <input type="checkbox"> Yalnız qəzalı avtomobillər
-                    </label>
-                </div>
-                <div class="filter-group">
-                    <select>
-                        <option disabled selected>Status</option>
-                        <option>Yeni</option>
-                        <option>Sürülmüş</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>
-                        <input type="checkbox"> Yüngül lehimli disklər
-                    </label>
-                    <label>
-                        <input type="checkbox"> ABS
-                    </label>
-                    <label>
-                        <input type="checkbox"> Lyuk
-                    </label>
-                    <label>
-                        <input type="checkbox"> Yağış sensoru
-                    </label>
-                    <label>
-                        <input type="checkbox"> Mərkəzi qapanma
-                    </label>
-                    <label>
-                        <input type="checkbox"> Park radarı
-                    </label>
-                    <label>
-                        <input type="checkbox"> Kondisioner
-                    </label>
-                    <label>
-                        <input type="checkbox"> Oturacaqların isidilməsi
-                    </label>
-                    <label>
-                        <input type="checkbox"> Dəri salon
-                    </label>
-                    <label>
-                        <input type="checkbox"> Ksenon lampalar
-                    </label>
-                    <label>
-                        <input type="checkbox"> Arxa görüntü kamerası
-                    </label>
-                    <label>
-                        <input type="checkbox"> Yan pərdələr
-                    </label>
-                    <label>
-                        <input type="checkbox"> Oturacaqların ventilyasiyası
-                    </label>
-                </div>
-                <div class="bottom-section">
-                    <button type="button" class="submit-button">Elanları göstər</button>
-                    <button type="reset" class="reset-button">Sıfırla</button>
-                    <button class="hide-button">Gizlət</button>
-                </div>
-            </form>
-        </div>
-        <div class="content-car">
-            {% for car in cars %}
-            <div class="card" id="{{ car.id }}">
-                <img class="car-img" src="{{ car.front_view_image.url }}" alt="Car Image">
-                <div class="badge">{{ car.brand }}</div>
-                <button class="icon" id="heart-icon" data-car-id="{{ car.id }}">
-                    <i class="fas fa-heart"></i>
-                </button>
-                <div class="card-body">
-                    <h5 class="car-model">{{ car.car_models }}</h5>
-                    <p class="car-info">{{ car.year }}, {{ car.engine_capasity }} L, {{ car.mileage }} km</p>
-                    <p class="car-location">{{ car.city }}, bugün 13:29</p>
-                </div>
-                <div class="card-footer">
-                    <span class="price">{{ car.price }} AZN</span>
-                    <span class="details"><i class="fas fa-crown"></i></span>
-                    <a href="{% url 'edit_car' car.id %}" class="edit-button">Edit</a>
-                </div>
+                {{ form.brand.label_tag }} {{ form.brand }}
+                {{ form.model.label_tag }} {{ form.model }}
             </div>
+            <div class="filter-group">
+                {{ form.min_price.label_tag }} {{ form.min_price }}
+                {{ form.max_price.label_tag }} {{ form.max_price }}
+                {{ form.MONEY_CURRENC.label_tag }} {{ form.MONEY_CURRENC }}
+                {{ form.credit_or_trade.label_tag }} {{ form.credit_or_trade }}
+            </div>
+            <div class="filter-group">
+                {{ form.COLOR.label_tag }} {{ form.COLOR }}
+                {{ form.FUEL_TYPE.label_tag }} {{ form.FUEL_TYPE }}
+                {{ form.TRANSMISSION_TYPE.label_tag }} {{ form.TRANSMISSION_TYPE }}
+                {{ form.TRANSMISSION.label_tag }} {{ form.TRANSMISSION }}
+            </div>
+            <div class="filter-group">
+                {{ form.min_engine_capacity.label_tag }} {{ form.min_engine_capacity }}
+                {{ form.max_engine_capacity.label_tag }} {{ form.max_engine_capacity }}
+                {{ form.min_power.label_tag }} {{ form.min_power }}
+                {{ form.max_power.label_tag }} {{ form.max_power }}
+                {{ form.min_mileage.label_tag }} {{ form.min_mileage }}
+                {{ form.max_mileage.label_tag }} {{ form.max_mileage }}
+                {{ form.MILEAGE_UNIT.label_tag }} {{ form.MILEAGE_UNIT }}
+            </div>
+            <div class="filter-group">
+                {{ form.BODY_TYPE.label_tag }} {{ form.BODY_TYPE }}
+                {{ form.min_year.label_tag }} {{ form.max_year }}
+                {{ form.max_year.label_tag }} {{ form.min_year }}
+            </div>
+            <div class="filter-group">
+                {{ form.CITY.label_tag }} {{ form.CITY }}
+            </div>
+            <div class="filter-group">
+                {{ form.OWNER_COUNT.label_tag }} {{ form.OWNER_COUNT }}
+                {{ form.SEAT_COUNT.label_tag }} {{ form.SEAT_COUNT }}
+                {{ form.MARKET.label_tag }} {{ form.MARKET }}
+                {{ form.CAR_STATUS.label_tag }} {{ form.CAR_STATUS }}
+            </div>
+            <div class="filter-group">
+                {{ form.no_damage.label_tag }} {{ form.no_damage }}
+                {{ form.no_paint.label_tag }} {{ form.no_paint }}
+                {{ form.accident_only.label_tag }} {{ form.accident_only }}
+            </div>
+            <div class="filter-group">
+                {{ form.alloy_wheels.label_tag }} {{ form.alloy_wheels }}
+                {{ form.abs.label_tag }} {{ form.abs }}
+                {{ form.sunroof.label_tag }} {{ form.sunroof }}
+                {{ form.rain_sensor.label_tag }} {{ form.rain_sensor }}
+                {{ form.central_locking.label_tag }} {{ form.central_locking }}
+                {{ form.park_sensors.label_tag }} {{ form.park_sensors }}
+                {{ form.air_conditioning.label_tag }} {{ form.air_conditioning }}
+                {{ form.seat_heating.label_tag }} {{ form.seat_heating }}
+                {{ form.leather_seats.label_tag }} {{ form.leather_seats }}
+                {{ form.xenon_lights.label_tag }} {{ form.xenon_lights }}
+                {{ form.rear_camera.label_tag }} {{ form.rear_camera }}
+                {{ form.side_airbags.label_tag }} {{ form.side_airbags }}
+                {{ form.ventilated_seats.label_tag }} {{ form.ventilated_seats }}
+            </div>
+            <div class="bottom-section">
+                <button type="submit" class="submit-button">Elanları göstər</button>
+                <button type="reset" class="reset-button">Sıfırla</button>
+            </div>
+        </form>
+
+        <!-- Avtomobil Siyahısı -->
+        <div class="car-list">
+            {% for car in cars %}
+                <div class="car-item">
+                    <img src="{{ car.front_view_image.url }}" alt="{{ car.model }}" />
+                    <p>Qiymət: {{ car.price }} {{ car.price_currency }}</p>
+                    <p>{{ car.brand }} {{ car.car_models }}</p>
+                    <h4> {{car.year}}, {{ car.engine_power }} hp, {{ car.mileage }} {{car.mileage_unit}} </h4>
+                    <h5> {{ car.city }} {{ car.time }}</h5>
+                    <a href="{% url 'car_page' car.id %}" class="btn btn-primary">Ətraflı</a>
+                </div>
+            {% empty %}
+                <p>Əlavə edilmiş avtomobillər yoxdur.</p>
             {% endfor %}
         </div>
-    
-        <script src="{% static 'user/main.js' %}"></script>
-    </body>
-    </html>
+    </div>
+
+    <footer>
+        <!-- Footer məlumatları -->
+    </footer>
+
+    <script>
+        document.querySelector('.reset-button').addEventListener('click', function() {
+            window.location.href = window.location.pathname;
+        });
+    </script>
+
+    <script src="{% static 'user/main.js' %}"></script>
+</body>
+</html>

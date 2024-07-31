@@ -10,7 +10,8 @@ router.register(r'carmodles', CarModelViewSet)
 
 urlpatterns = [
     path('create_car/', views.create_car, name='create_car'),
-    path('edit_car/<int:car_id>/', views.edit_car, name='edit_car'),  # Yeni düzenleme URL'si
+    path('edit_car/<int:car_id>/', views.edit_car, name='edit_car'), 
+    path('delete_car/<int:car_id>/', views.delete_car, name='delete_car'),
     path('api', include(router.urls)),
     path('car-model-autocomplete/', CarModelAutocomplete.as_view(), name='car-model-autocomplete'),
     path('', views.home, name='home'),
@@ -20,4 +21,6 @@ urlpatterns = [
     path('login-register/', views.login_register, name='login_register'),
     path('login/', views.login_user, name='login_user'),
     path('register/', views.register_user, name='register_user'),
+    path('car_page/<int:car_id>/', views.car_page, name='car_page'),
+    path('approve_car/<int:car_id>/', views.approve_car, name='approve_car'),
 ]

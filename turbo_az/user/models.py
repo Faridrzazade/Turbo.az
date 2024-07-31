@@ -69,7 +69,7 @@ class OwnerCount(models.Model):
         return f"{self.name}"
 
 class YearChoices(models.Model):
-    name = models.CharField(max_length=16)
+    name = models.IntegerField()
     def __str__(self):
         return f"{self.name}"
 
@@ -88,6 +88,24 @@ class TransmissionType(models.Model):
     name = models.CharField(max_length=32)
     def __str__(self):
         return f"{self.name}"
+
+class CarStatus(models.Model):
+    name = models.CharField(max_length=30, verbose_name='Status')
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Status'
+        verbose_name_plural = 'Statuslar'
+
+
+class IsApproved(models.Model):
+    name = models.CharField(max_length=30, verbose_name='Tesdiq')
+
+    def __str__(self):
+        return self.name
+
 
 class Car(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -135,6 +153,8 @@ class Car(models.Model):
     email = models.EmailField(verbose_name='E-mail', blank=True)
     phone_number = models.CharField(max_length=20, verbose_name='Telefon nömrəsi')
     transmission_type = models.ForeignKey(TransmissionType, on_delete=models.CASCADE, null=True, verbose_name='Ötürücü')
+    car_status = models.ForeignKey(CarStatus, on_delete=models.CASCADE, null=True, verbose_name='Status')
+    is_approved = models.BooleanField(default=False, verbose_name='Təsdiq')
 
     def __str__(self):
         return f"{self.brand} {self.car_models} - {self.price}"
@@ -149,3 +169,5 @@ class ImageCar(models.Model):
     class Meta:
         verbose_name = 'Avtomobil Şəkili'
         verbose_name_plural = 'Avtomobil Şəkilləri'
+
+
