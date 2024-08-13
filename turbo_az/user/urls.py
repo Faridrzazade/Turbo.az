@@ -46,3 +46,4 @@ urlpatterns = [
     path('profile/edit/', edit_profile, name='edit_profile'),
     path('profile/delete/', delete_profile, name='delete_profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

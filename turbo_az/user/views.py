@@ -78,6 +78,7 @@ def delete_profile(request):
 
 def car_page(request, car_id):
     car = get_object_or_404(Car, id=car_id)
+    car.increment_view_count()
     return render(request, 'user/car_page.html', {'car': car})
 
 
@@ -149,10 +150,15 @@ def register_user(request):
         user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         user.save()
 
-        profile, created = Profile.objects.get_or_create(user=user, phone=phone, gender=gender, birth_date=birth_date)
-        if created:
+        try:
+            profile = Profile.objects.get(user=user)
+            profile.phone = phone
+            profile.gender = gender
+            profile.birth_date = birth_date
             profile.save()
-
+        except ObjectDoesNotExist:
+            profile = Profile.objects.create(user=user, phone=phone, gender=gender, birth_date=birth_date)
+        
         login(request, user)
         
         # Email göndərmə məntiqi
@@ -303,7 +309,7 @@ def home(request):
         if cleaned_data.get('max_year'):
             filters['year__lte'] = cleaned_data['min_year']
         if cleaned_data.get('CITY'):
-            filters['city__name'] = cleaned_data['CITY']
+            filters['city'] = cleaned_data['CITY']
         if cleaned_data.get('OWNER_COUNT'):
             filters['owner_number'] = cleaned_data['OWNER_COUNT']
         if cleaned_data.get('SEAT_COUNT'):
@@ -454,4 +460,5 @@ class CarModelAutocomplete(autocomplete.Select2QuerySetView):
 
 def like_page(request):
     return render(request, 'user/like.html')
+
 

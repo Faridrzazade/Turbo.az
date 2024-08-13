@@ -12,7 +12,7 @@ class CarForm(forms.ModelForm):
     class Meta:
         model = Car
         fields = [
-            'id' , 'brand', 'car_models', 'new_bord', 'mileage', 'mileage_unit',
+            'brand', 'car_models', 'new_bord', 'mileage', 'mileage_unit',
             'color', 'price', 'price_currency', 'owner_number', 'fuel_type',
             'transmission', 'year', 'engine_capasity', 'engine_power',
             'collected_for_which_market', 'damage_have', 'painted',
@@ -43,8 +43,8 @@ class CarFilterForm(forms.Form):
 
 
 
-    brand = forms.ChoiceField(choices=[('', 'Tüm Markalar')] + brand_choices, required=False)
-    model = forms.ChoiceField(choices=[('', 'Tüm Modeller')] + model_choices, required=False)
+    brand = forms.ChoiceField(choices=[('', '-------')] + brand_choices, required=False)
+    model = forms.ChoiceField(choices=[('', '-------')] + model_choices, required=False)
     min_price = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     max_price = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     min_engine_capasity = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
@@ -53,14 +53,14 @@ class CarFilterForm(forms.Form):
     max_power = forms.DecimalField(max_digits=5, decimal_places=2, required=False)
     min_mileage = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
     max_mileage = forms.DecimalField(max_digits=10, decimal_places=2, required=False)
-    MILEAGE_UNIT = forms.ChoiceField(choices=[('', 'Mileage seçin')] + [(mileage.id, mileage.name) for mileage in Mileage.objects.all()], required=False)
+    MILEAGE_UNIT = forms.ChoiceField(choices=[('', '-------')] + [(mileage.id, mileage.name) for mileage in Mileage.objects.all()], required=False)
     min_year = forms.ModelChoiceField(queryset=YearChoices.objects.all(), required=False)
     max_year = forms.ModelChoiceField(queryset=YearChoices.objects.all(), required=False)
-    CITY = forms.ChoiceField(choices=[('', 'Şəhər seçin')] + [(city.id, city.name) for city in CityChoices.objects.all()], required=False)
-    OWNER_COUNT = forms.ChoiceField(choices=[('', 'Sahib sayı seçin')] + [(owner.id, owner.name) for owner in OwnerCount.objects.all()], required=False)
-    SEAT_COUNT = forms.ChoiceField(choices=[('', 'Yerlər sayı seçin')] + [(seat.id, seat.name) for seat in SeatCountChoices.objects.all()], required=False)
-    MARKET = forms.ChoiceField(choices=[('', 'Bazar seçin')] + [(market.id, market.name) for market in MarketChoices.objects.all()], required=False)
-    CAR_STATUS = forms.ChoiceField(choices=[('', 'Status seçin')] + [(status.id, status.name) for status in CarStatus.objects.all()], required=False)
+    CITY = forms.ChoiceField(choices=[('', '-------')] + [(city.id, city.name) for city in CityChoices.objects.all()], required=False)
+    OWNER_COUNT = forms.ChoiceField(choices=[('', '-------')] + [(owner.id, owner.name) for owner in OwnerCount.objects.all()], required=False)
+    SEAT_COUNT = forms.ChoiceField(choices=[('', '-------')] + [(seat.id, seat.name) for seat in SeatCountChoices.objects.all()], required=False)
+    MARKET = forms.ChoiceField(choices=[('', '-------')] + [(market.id, market.name) for market in MarketChoices.objects.all()], required=False)
+    CAR_STATUS = forms.ChoiceField(choices=[('', '-------')] + [(status.id, status.name) for status in CarStatus.objects.all()], required=False)
 
 
 
