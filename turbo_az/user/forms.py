@@ -62,8 +62,6 @@ class CarFilterForm(forms.Form):
         self.fields['MARKET'].choices += [(market.id, market.name) for market in MarketChoices.objects.all()]
         self.fields['CAR_STATUS'].choices += [(status.id, status.name) for status in CarStatus.objects.all()]
 
-
-
 class ProfileForm(forms.ModelForm):
     phone = forms.CharField(max_length=15, required=False)
     gender = forms.ChoiceField(choices=[('M', 'Male'), ('F', 'Female')], required=False)
