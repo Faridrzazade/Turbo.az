@@ -5,6 +5,9 @@ from django.conf import settings
 from celery import shared_task
 from django.contrib.auth.models import User
 from .models import Car, ImageCar
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+
 
 def save_base64_image(data, filename):
     """
@@ -77,3 +80,19 @@ def create_car_task(user_id, form_data, file_data_list):
         filename = f"{user.username}_{car.id}_{idx}"
         file_path = save_base64_image(file_data, filename)
         ImageCar.objects.create(car=car, image=file_path)
+
+
+@shared_task
+def send_registration_email(username, email):
+    subject = 'Qeydiyyatınız tamamlandı'
+    recipient_list = [email]
+    customer_message = render_to_string('user/register_email.html', {'username': username})
+
+    send_mail(
+        subject,
+        '',
+        'rzazadfrid@gmail.com',
+        recipient_list,
+        fail_silently=False,
+        html_message=customer_message,
+    )

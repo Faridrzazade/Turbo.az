@@ -1,5 +1,13 @@
 import base64
+import paypalrestsdk
 
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
+from .models import Car
+from .paypal_config import paypalrestsdk
+from user.tasks import send_registration_email  
 from django.conf import settings
 from django.utils.html import strip_tags
 from .serializers import CarSerializer
@@ -10,7 +18,6 @@ from django.core.files.storage import default_storage
 from celery import shared_task
 from django.core.mail import send_mail, EmailMessage
 from django.template.loader import render_to_string
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -51,17 +58,17 @@ def user_cars(request):
     cars = Car.objects.filter(user=user)
     return render(request, 'user/user_cars.html', {'cars': cars})
 
-
 @login_required
 def user_profile(request):
     profile = Profile.objects.get(user=request.user)
-    user_cars = Car.objects.filter(user=request.user)
+    approved_cars = Car.objects.filter(user=request.user, is_approved=True)
+    pending_cars = Car.objects.filter(user=request.user, is_approved=False)
     context = {
         'profile': profile,
-        'user_cars': user_cars
+        'approved_cars': approved_cars,
+        'pending_cars': pending_cars
     }
     return render(request, 'user/user_profile.html', context)
-
 
 @login_required
 def delete_profile(request):
@@ -161,28 +168,13 @@ def register_user(request):
         
         login(request, user)
         
-        # Email göndərmə məntiqi
-        subject = 'Qeydiyyatınız tamamlandı'
-        recipient_list = [user.email]  # istifadəçinin email adresi
-        customer_message = render_to_string('user/register_email.html', {'username': username})
+        # Use Celery to send the registration email
+        send_registration_email.delay(username, email)
 
-        try:
-            send_mail(
-                subject,
-                '',
-                'rzazadfrid@gmail.com',
-                recipient_list,
-                fail_silently=False,
-                html_message=customer_message,
-            )
-            messages.success(request, 'Qeydiyyat uğurla tamamlandı və e-poçt göndərildi.')
-        except Exception as e:
-            messages.error(request, f'E-poçt göndərməkdə problem var: {e}')
-        
+        messages.success(request, 'Qeydiyyat uğurla tamamlandı və e-poçt göndərildi.')
         return redirect('home')
     
     return render(request, 'user/register_user.html')
-
 
     
 def login_user(request):
@@ -462,3 +454,59 @@ def like_page(request):
     return render(request, 'user/like.html')
 
 
+
+
+def create_payment(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+
+    payment = paypalrestsdk.Payment({
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": request.build_absolute_uri(reverse('execute_payment', args=[car.id])),
+            "cancel_url": request.build_absolute_uri(reverse('cancel_payment'))
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": f"VIP Ad for {car.brand} {car.car_models}",
+                    "sku": "vip_ad",
+                    "price": "10.00",
+                    "currency": "USD",
+                    "quantity": 1
+                }]
+            },
+            "amount": {
+                "total": "10.00",
+                "currency": "USD"
+            },
+            "description": f"VIP Ad for {car.brand} {car.car_models} for 30 days."
+        }]
+    })
+
+    if payment.create():
+        for link in payment.links:
+            if link.rel == "approval_url":
+                approval_url = link.href
+                return redirect(approval_url)
+    else:
+        return render(request, 'user/payment_error.html', {'error': payment.error})
+
+def execute_payment(request, car_id):
+    payment_id = request.GET.get('paymentId')
+    payer_id = request.GET.get('PayerID')
+
+    payment = paypalrestsdk.Payment.find(payment_id)
+
+    if payment.execute({"payer_id": payer_id}):
+        car = get_object_or_404(Car, id=car_id)
+        car.is_vip = True
+        car.save()
+        return render(request, 'user/payment_success.html', {'car': car})
+    else:
+        return render(request, 'user/payment_error.html', {'error': payment.error})
+
+def cancel_payment(request):
+    return render(request, 'user/payment_cancelled.html')
