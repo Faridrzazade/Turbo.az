@@ -5,7 +5,6 @@ import base64
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Car
-from .paypal_config import paypalrestsdk
 from user.tasks import send_registration_email  
 from django.conf import settings
 from django.utils.html import strip_tags
