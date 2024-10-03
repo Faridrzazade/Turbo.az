@@ -1,9 +1,12 @@
 import base64
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from .models import Car
-from user.tasks import send_registration_email  
+from .tasks import send_registration_email  
 from django.conf import settings
 from django.utils.html import strip_tags
 from .serializers import CarSerializer
@@ -25,6 +28,8 @@ from .forms import *
 from .serializers import *
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.exceptions import ObjectDoesNotExist
 from .models import (
     Car, Brand, CarModel, FuelTypeChoices, TransmissionChoices,
     BodyTypeChoices, ColorChoices, MarketChoices, CityChoices,
@@ -162,32 +167,47 @@ def register_user(request):
         except ObjectDoesNotExist:
             profile = Profile.objects.create(user=user, phone=phone, gender=gender, birth_date=birth_date)
         
-        login(request, user)
-        
+        # Generate JWT tokens
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+        refresh_token = str(refresh)
+
+        response = redirect('home')
+        response.set_cookie('access_token', access_token)
+        response.set_cookie('refresh_token', refresh_token)
+
         # Use Celery to send the registration email
         send_registration_email.delay(username, email)
 
         messages.success(request, 'Qeydiyyat uğurla tamamlandı və e-poçt göndərildi.')
-        return redirect('home')
+        return response
     
     return render(request, 'user/register_user.html')
 
     
 def login_user(request):
     if request.method == 'POST':
-        print(request.POST)  
         username = request.POST.get('username')
         password = request.POST.get('password')
 
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')
+
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+            refresh_token = str(refresh)
+
+            response = redirect('home')
+            response.set_cookie('access_token', access_token)
+            response.set_cookie('refresh_token', refresh_token)
+            
+            return response
         else:
             messages.error(request, 'Yanlış istifadəçi adı və ya şifrə.')
     
     return render(request, 'user/login_user.html')
-
 
 
 @login_required
@@ -434,9 +454,27 @@ class CarListView(generics.ListCreateAPIView):
 
 
 
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        content = {'message': 'Bu, qorunan bir görünüşdür.'}
+        return Response(content)
+
+
+
 
 def like_page(request):
     return render(request, 'user/like.html')
+
+
+
+
+
+
+
+
+
 
 
 

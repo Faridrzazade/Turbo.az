@@ -31,6 +31,8 @@ class CarForm(forms.ModelForm):
             'interior_view_image': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
+
+
 class CarFilterForm(forms.Form):
     brand = forms.ChoiceField(choices=[('', '-------')], required=False)
     model = forms.ChoiceField(choices=[('', '-------')], required=False)

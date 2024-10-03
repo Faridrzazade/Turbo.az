@@ -4,7 +4,7 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-COPY requirements.txt /code/
+COPY requirements.txt /code/    
 
 RUN apt-get update
 

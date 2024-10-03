@@ -31,7 +31,7 @@ urlpatterns = [
     path('edit_car/<int:car_id>/', views.edit_car, name='edit_car'), 
     path('delete_car/<int:car_id>/', views.delete_car, name='delete_car'),
     path('api', include(router.urls)),
-    path('', views.home, name='home'),
+    path('', views.home, name='home'),  
     path('salon/', views.salons, name='salons'),
     path('favicon.ico/', RedirectView.as_view(url='/static/favicon.ico')),
     path('like/', views.like_page, name='like_page'),
@@ -44,5 +44,18 @@ urlpatterns = [
     path('profile/', user_profile, name='user_profile'),
     path('profile/edit/', edit_profile, name='edit_profile'),
     path('profile/delete/', delete_profile, name='delete_profile'),
+    path('protected/', ProtectedView.as_view(), name='protected_view'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+
+
+
+
+
+
+
+
+
 
